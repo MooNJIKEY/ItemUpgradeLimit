@@ -1,0 +1,14 @@
+*.dll
+*.pdb
+*.user
+*.suo
+*.cache
+bin/
+obj/
+.vs/
+packages/
+*.zip
+BepInExPack_Valheim/
+valheim_Data/
+MonoBleedingEdge/
+

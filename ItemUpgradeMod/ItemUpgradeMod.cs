@@ -226,8 +226,8 @@ namespace ItemUpgradeMod
     }
 
     // Patch CraftingStation.GetLevel to bypass workbench level restriction
-    // This allows upgrading items beyond the normal workbench level limit
-    // Returns the maximum configured level from mod settings
+    // In vanilla, workbench max level is 5, so it won't allow upgrades above level 5
+    // This patch ensures workbench level is at least as high as the maximum configured upgrade level
     [HarmonyPatch(typeof(CraftingStation), "GetLevel")]
     public static class CraftingStation_GetLevel_Patch
     {
@@ -236,17 +236,21 @@ namespace ItemUpgradeMod
             if (!ItemUpgradeMod.ModEnabled.Value || __instance == null)
                 return;
 
-            // If this is a workbench, return the maximum configured level
-            // This ensures workbench level matches the highest configured upgrade level
+            // Check if this is a workbench
             string stationName = __instance.m_name?.ToLower() ?? "";
             string stationPrefabName = __instance.name?.ToLower() ?? "";
             
             if (stationName.Contains("workbench") || stationPrefabName.Contains("workbench") || 
                 stationName == "$piece_workbench" || __instance.m_workbenchExtension)
             {
-                // Return the maximum level from all mod settings
-                // This way if user sets max level to 10, workbench will be level 10
-                __result = ItemUpgradeMod.GetMaxConfiguredLevel();
+                // Get the maximum configured level from mod settings
+                int maxConfiguredLevel = ItemUpgradeMod.GetMaxConfiguredLevel();
+                
+                // Return the maximum between actual workbench level and configured max level
+                // This ensures workbench can handle upgrades up to configured level
+                // In vanilla, workbench max is 5, but if mod sets items to level 10,
+                // workbench will return level 10 to allow those upgrades
+                __result = Math.Max(__result, maxConfiguredLevel);
             }
         }
     }

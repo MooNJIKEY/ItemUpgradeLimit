@@ -12,7 +12,7 @@ namespace ItemUpgradeMod
     {
         public const string PluginGUID = "com.valheim.itemupgrademod";
         public const string PluginName = "ItemUpgradeMod";
-        public const string PluginVersion = "1.0.1";
+        public const string PluginVersion = "1.0.2";
 
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
@@ -199,6 +199,30 @@ namespace ItemUpgradeMod
                         item.m_shared.m_maxQuality = maxLevel;
                     }
                 }
+            }
+        }
+    }
+
+    // Patch CraftingStation.GetLevel to bypass workbench level restriction
+    // This allows upgrading items beyond the normal workbench level limit
+    [HarmonyPatch(typeof(CraftingStation), "GetLevel")]
+    public static class CraftingStation_GetLevel_Patch
+    {
+        static void Postfix(CraftingStation __instance, ref int __result)
+        {
+            if (!ItemUpgradeMod.ModEnabled.Value || __instance == null)
+                return;
+
+            // If this is a workbench, return a high level to bypass restrictions
+            // The actual upgrade limit is still controlled by m_maxQuality
+            string stationName = __instance.m_name?.ToLower() ?? "";
+            string stationPrefabName = __instance.name?.ToLower() ?? "";
+            
+            if (stationName.Contains("workbench") || stationPrefabName.Contains("workbench") || 
+                stationName == "$piece_workbench" || __instance.m_workbenchExtension)
+            {
+                // Return a level high enough to allow any configured upgrade (up to 20)
+                __result = 20; // Maximum reasonable level
             }
         }
     }

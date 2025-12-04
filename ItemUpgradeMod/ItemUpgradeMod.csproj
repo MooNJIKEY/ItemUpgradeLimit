@@ -4,7 +4,7 @@
     <TargetFramework>net48</TargetFramework>
     <AssemblyName>ItemUpgradeMod</AssemblyName>
     <Description>Mod to increase maximum upgrade level for items in Valheim</Description>
-    <Version>1.0.0</Version>
+    <Version>1.0.2</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>
@@ -33,6 +33,7 @@
 
   <Target Name="CopyToPlugins" AfterTargets="Build">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="..\BepInExPack_Valheim\BepInEx\plugins\ItemUpgradeMod\" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="ThunderstorePackage\plugins\ItemUpgradeMod\" />
   </Target>
 
 </Project>

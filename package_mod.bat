@@ -8,11 +8,17 @@ cd ItemUpgradeMod\ThunderstorePackage
 
 echo Проверка файлов...
 
-if not exist "ItemUpgradeMod.dll" (
-    echo ❌ ОШИБКА: ItemUpgradeMod.dll не найден!
-    echo    Запустите сначала build_mod.bat
-    pause
-    exit /b 1
+if not exist "plugins\ItemUpgradeMod\ItemUpgradeMod.dll" (
+    echo ⚠️  ВНИМАНИЕ: ItemUpgradeMod.dll не найден в plugins\ItemUpgradeMod\
+    echo    Мод будет упакован без DLL файла.
+    echo    Для сборки DLL запустите build_mod.bat из папки ItemUpgradeMod
+    echo    (требуется .NET SDK и assembly_valheim.dll из игры)
+    echo.
+    echo    Продолжить упаковку? (Y/N)
+    set /p continue="> "
+    if /i not "%continue%"=="Y" (
+        exit /b 1
+    )
 )
 
 if not exist "manifest.json" (
@@ -49,9 +55,9 @@ echo Создание ZIP архива...
 
 cd ..\..\
 
-if exist "ItemUpgradeMod_v1.0.1.zip" del "ItemUpgradeMod_v1.0.1.zip"
+if exist "ItemUpgradeMod_v1.0.2.zip" del "ItemUpgradeMod_v1.0.2.zip"
 
-powershell -Command "Compress-Archive -Path 'ItemUpgradeMod\ThunderstorePackage\*' -DestinationPath 'ItemUpgradeMod_v1.0.1.zip' -Force"
+powershell -Command "Compress-Archive -Path 'ItemUpgradeMod\ThunderstorePackage\*' -DestinationPath 'ItemUpgradeMod_v1.0.2.zip' -Force"
 
 if %ERRORLEVEL% EQU 0 (
     echo.
@@ -59,7 +65,7 @@ if %ERRORLEVEL% EQU 0 (
     echo ✅ Пакет создан успешно!
     echo ========================================
     echo.
-    echo Файл: ItemUpgradeMod_v1.0.1.zip
+    echo Файл: ItemUpgradeMod_v1.0.2.zip
     echo.
     echo Содержимое:
     dir /B ItemUpgradeMod\ThunderstorePackage

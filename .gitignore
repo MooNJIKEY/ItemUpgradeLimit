@@ -14,3 +14,4 @@ ThunderstorePackage/*
 !ThunderstorePackage/manifest.json
 
 *.zip
+THUNDERSTORE_UPDATE_GUIDE.md

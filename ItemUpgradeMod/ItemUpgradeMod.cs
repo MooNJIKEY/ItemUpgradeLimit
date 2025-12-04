@@ -136,6 +136,28 @@ namespace ItemUpgradeMod
 
             return DefaultMaxLevel.Value;
         }
+
+        // Get the maximum level from all configured settings
+        // This is used to set workbench level to allow all configured upgrades
+        public static int GetMaxConfiguredLevel()
+        {
+            if (!ModEnabled.Value)
+                return 5; // Default workbench max level
+
+            int maxLevel = Math.Max(WeaponMaxLevel.Value, 
+                Math.Max(ArmorMaxLevel.Value, 
+                Math.Max(ShieldMaxLevel.Value, 
+                Math.Max(ToolMaxLevel.Value, DefaultMaxLevel.Value))));
+
+            // Check custom levels too
+            foreach (var customLevel in CustomLevels.Values)
+            {
+                if (customLevel > maxLevel)
+                    maxLevel = customLevel;
+            }
+
+            return maxLevel;
+        }
     }
 
     // Patch ObjectDB to modify max quality when items are loaded
@@ -205,6 +227,7 @@ namespace ItemUpgradeMod
 
     // Patch CraftingStation.GetLevel to bypass workbench level restriction
     // This allows upgrading items beyond the normal workbench level limit
+    // Returns the maximum configured level from mod settings
     [HarmonyPatch(typeof(CraftingStation), "GetLevel")]
     public static class CraftingStation_GetLevel_Patch
     {
@@ -213,16 +236,17 @@ namespace ItemUpgradeMod
             if (!ItemUpgradeMod.ModEnabled.Value || __instance == null)
                 return;
 
-            // If this is a workbench, return a high level to bypass restrictions
-            // The actual upgrade limit is still controlled by m_maxQuality
+            // If this is a workbench, return the maximum configured level
+            // This ensures workbench level matches the highest configured upgrade level
             string stationName = __instance.m_name?.ToLower() ?? "";
             string stationPrefabName = __instance.name?.ToLower() ?? "";
             
             if (stationName.Contains("workbench") || stationPrefabName.Contains("workbench") || 
                 stationName == "$piece_workbench" || __instance.m_workbenchExtension)
             {
-                // Return a level high enough to allow any configured upgrade (up to 20)
-                __result = 20; // Maximum reasonable level
+                // Return the maximum level from all mod settings
+                // This way if user sets max level to 10, workbench will be level 10
+                __result = ItemUpgradeMod.GetMaxConfiguredLevel();
             }
         }
     }

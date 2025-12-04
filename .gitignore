@@ -10,6 +10,7 @@ packages/
 BepInExPack_Valheim/
 valheim_Data/
 MonoBleedingEdge/
-ThunderstorePackage/
+ThunderstorePackage/*
+!ThunderstorePackage/manifest.json
 
 *.zip

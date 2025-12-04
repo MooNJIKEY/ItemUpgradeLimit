@@ -1,0 +1,9 @@
+{
+    "name": "MooNJIKEY_ItemUpgradeLimit",
+    "version_number": "1.0.2",
+    "website_url": "https://github.com/MooNJIKEY/ItemUpgradeLimit",
+    "description": "Allows you to configure the maximum upgrade level for items in Valheim. Bypasses workbench level restrictions.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2202"
+    ]
+}
